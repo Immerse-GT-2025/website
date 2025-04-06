@@ -18,11 +18,10 @@ const languageOptions = [
 
 export default function ARExperience() {
   const [isClient, setIsClient] = useState(false)
-  const [currentView, setCurrentView] = useState<'main' | 'language' | 'accessibility' | 'video'>('main')
+  const [currentView, setCurrentView] = useState<'language' | 'accessibility' | 'video'>('video')
   const [currentLanguage, setCurrentLanguage] = useState('en')
   const [dyslexiaMode, setDyslexiaMode] = useState(false)
   const [showLyrics, setShowLyrics] = useState(true)
-  const [isARMode, setIsARMode] = useState(false)
   const [performerTracking, setPerformerTracking] = useState(true)
   const [textSize, setTextSize] = useState(1)
   const [lyricsPosition, setLyricsPosition] = useState({ x: 50, y: 85 })
@@ -38,18 +37,16 @@ export default function ARExperience() {
       setCurrentLyric(currentLang.lyrics)
     }
     
-    // Animate lyrics position with a subtle movement when in AR mode
-    if (isARMode) {
-      const interval = setInterval(() => {
-        setLyricsPosition({
-          x: 50 + Math.sin(Date.now() / 2000) * 3,
-          y: 85 + Math.cos(Date.now() / 2500) * 2
-        })
-      }, 50)
-      
-      return () => clearInterval(interval)
-    }
-  }, [currentLanguage, isARMode])
+    // Animate lyrics position with a subtle movement
+    const interval = setInterval(() => {
+      setLyricsPosition({
+        x: 50 + Math.sin(Date.now() / 2000) * 3,
+        y: 85 + Math.cos(Date.now() / 2500) * 2
+      })
+    }, 50)
+    
+    return () => clearInterval(interval)
+  }, [currentLanguage])
 
   if (!isClient) {
     return (
@@ -57,82 +54,6 @@ export default function ARExperience() {
         <div className="w-full h-full flex items-center justify-center">
           <p className="text-white/50">Loading...</p>
         </div>
-      </div>
-    )
-  }
-
-  // Main screen with language selection
-  if (currentView === 'main') {
-    return (
-      <div className="phone-frame mx-auto flex flex-col items-center justify-center bg-[#0a0e1a] relative">
-        <motion.h1
-          className="text-3xl font-bold mb-16"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {languageOptions.find(l => l.code === currentLanguage)?.name || 'English'}
-        </motion.h1>
-        
-        <div className="flex flex-col gap-6 w-4/5">
-          {languageOptions.map((lang, index) => (
-            <motion.button
-              key={lang.code}
-              className={`language-button text-2xl py-3 ${lang.code === currentLanguage ? 'bg-[#1a3a6e] border-white/40' : ''}`}
-              onClick={() => setCurrentLanguage(lang.code)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-            >
-              {lang.name}
-            </motion.button>
-          ))}
-        </div>
-        
-        <div className="my-8 flex flex-col w-4/5 gap-5">
-          <motion.div 
-            className="flex justify-between items-center"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <span className="text-xl">Dyslexia-friendly mode</span>
-            <button 
-              onClick={() => setDyslexiaMode(!dyslexiaMode)}
-              className={`w-12 h-6 rounded-full ${dyslexiaMode ? 'bg-blue-500' : 'bg-gray-700'} relative`}
-            >
-              <span className={`absolute w-5 h-5 rounded-full bg-white top-0.5 transform transition-transform ${dyslexiaMode ? 'translate-x-6' : 'translate-x-1'}`}></span>
-            </button>
-          </motion.div>
-          
-          <motion.div 
-            className="flex justify-between items-center"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <span className="text-xl">Show lyrics</span>
-            <button 
-              onClick={() => setShowLyrics(!showLyrics)}
-              className={`w-12 h-6 rounded-full ${showLyrics ? 'bg-blue-500' : 'bg-gray-700'} relative`}
-            >
-              <span className={`absolute w-5 h-5 rounded-full bg-white top-0.5 transform transition-transform ${showLyrics ? 'translate-x-6' : 'translate-x-1'}`}></span>
-            </button>
-          </motion.div>
-        </div>
-        
-        <motion.button
-          className="main-button text-xl py-3 px-12 mt-6 rounded-full"
-          onClick={() => {
-            setCurrentView('video');
-            setIsARMode(true);
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          Get Started
-        </motion.button>
       </div>
     )
   }
