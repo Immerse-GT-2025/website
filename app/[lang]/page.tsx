@@ -51,20 +51,16 @@ export default function LangPage({ params }: { params: { lang: string } }) {
         >
           <div className="flex items-center justify-center md:justify-start mb-4">
             <motion.div
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mr-4"
+              className="w-20 h-20 rounded-full flex items-center justify-center mr-4 overflow-hidden"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="none" fill="#0a0e1a" />
-                <path d="M7 14.5C8.5 16.5 15.5 16.5 17 14.5" stroke="#0a0e1a" strokeWidth="2" strokeLinecap="round" />
-                <circle cx="8.5" cy="9.5" r="1.5" fill="#0a0e1a" />
-                <path
-                  d="M15.5 9.5C15.5 10.3284 14.8284 11 14 11C13.1716 11 12.5 10.3284 12.5 9.5C12.5 8.67157 13.1716 8 14 8C14.8284 8 15.5 8.67157 15.5 9.5Z"
-                  fill="#0a0e1a"
-                />
-              </svg>
+              <img 
+                src="/logo.png" 
+                alt="ClarifiAI Logo"
+                className="w-full h-full object-cover"
+              />
             </motion.div>
             <motion.h1
               className="text-5xl md:text-7xl font-bold"
