@@ -3,8 +3,9 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { motion } from "framer-motion"
-import { Settings } from "lucide-react"
+import { Settings, ZoomIn, Languages, Type, Grid, User, Info } from "lucide-react"
 import VideoEmbed from "../video-embed"
+import { useState } from "react"
 
 // Define translations
 const translations = {
@@ -14,6 +15,10 @@ const translations = {
     button: "Get started",
     nowPlaying: "Now Playing",
     lyrics: "And here we are together",
+    info: "Experience concerts in a whole new way with ClarifiAI's AR Glasses",
+    featureZoom: "Smart performer tracking",
+    featureLanguage: "Multi-language support",
+    featureAccess: "Accessibility features",
   },
   fr: {
     tagline: "RA adaptative pour concerts",
@@ -21,6 +26,10 @@ const translations = {
     button: "Commencer",
     nowPlaying: "En lecture",
     lyrics: "Et nous voilà ensemble",
+    info: "Vivez les concerts d'une manière totalement nouvelle avec les lunettes RA de ClarifiAI",
+    featureZoom: "Suivi intelligent des artistes",
+    featureLanguage: "Support multilingue",
+    featureAccess: "Fonctionnalités d'accessibilité",
   },
   es: {
     tagline: "RA adaptativa para conciertos",
@@ -28,6 +37,10 @@ const translations = {
     button: "Comenzar",
     nowPlaying: "Reproduciendo",
     lyrics: "Y aquí estamos juntos",
+    info: "Experimenta conciertos de una forma totalmente nueva con las gafas RA de ClarifiAI",
+    featureZoom: "Seguimiento inteligente de artistas",
+    featureLanguage: "Soporte multilingüe",
+    featureAccess: "Características de accesibilidad",
   },
 }
 
@@ -39,6 +52,8 @@ export default function LangPage({ params }: { params: { lang: string } }) {
   }
 
   const t = translations[lang as keyof typeof translations]
+  const [activeFeature, setActiveFeature] = useState<string | null>(null)
+  const [showControls, setShowControls] = useState(false)
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8">
@@ -96,14 +111,103 @@ export default function LangPage({ params }: { params: { lang: string } }) {
               {t.button}
             </Link>
           </motion.div>
+          
+          {/* Feature description based on active control */}
+          {activeFeature && (
+            <motion.div
+              className="mt-8 p-4 bg-black/30 backdrop-blur-sm rounded-lg"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+            >
+              <h3 className="text-xl font-semibold mb-2">
+                {activeFeature === 'zoom' && t.featureZoom}
+                {activeFeature === 'language' && t.featureLanguage}
+                {activeFeature === 'accessibility' && t.featureAccess}
+                {activeFeature === 'info' && 'ClarifiAI'}
+              </h3>
+              <p className="text-white/80">
+                {activeFeature === 'zoom' && 'Automatically follows performers on stage, zooming in at key moments.'}
+                {activeFeature === 'language' && 'Switch between lyrics in English, Spanish, or French with a simple swipe.'}
+                {activeFeature === 'accessibility' && 'Customize text size, enable dyslexia-friendly mode, and high contrast settings.'}
+                {activeFeature === 'info' && t.info}
+              </p>
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
+          className="relative"
+          onMouseEnter={() => setShowControls(true)}
+          onMouseLeave={() => setShowControls(false)}
         >
-          <VideoEmbed nowPlaying={t.nowPlaying} lyrics={t.lyrics} />
+          <div className="relative">
+            <VideoEmbed nowPlaying={t.nowPlaying} lyrics={t.lyrics} />
+            
+            {/* AR Controls - Appear on hover */}
+            {showControls && (
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Left Control */}
+                <motion.button 
+                  className="spectacles-control-button left-control"
+                  onMouseEnter={() => setActiveFeature('language')}
+                  onMouseLeave={() => setActiveFeature(null)}
+                  onClick={(e) => { e.stopPropagation(); }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Languages className="w-5 h-5" />
+                </motion.button>
+                
+                {/* Top Control */}
+                <motion.button 
+                  className="spectacles-control-button top-control" 
+                  onMouseEnter={() => setActiveFeature('info')}
+                  onMouseLeave={() => setActiveFeature(null)}
+                  onClick={(e) => { e.stopPropagation(); }}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Info className="w-5 h-5" />
+                </motion.button>
+                
+                {/* Right Control */}
+                <motion.button 
+                  className="spectacles-control-button right-control" 
+                  onMouseEnter={() => setActiveFeature('zoom')}
+                  onMouseLeave={() => setActiveFeature(null)}
+                  onClick={(e) => { e.stopPropagation(); }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <ZoomIn className="w-5 h-5" />
+                </motion.button>
+                
+                {/* Bottom Control */}
+                <motion.button 
+                  className="spectacles-control-button bottom-control" 
+                  onMouseEnter={() => setActiveFeature('accessibility')}
+                  onMouseLeave={() => setActiveFeature(null)}
+                  onClick={(e) => { e.stopPropagation(); }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Type className="w-5 h-5" />
+                </motion.button>
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
 
