@@ -14,18 +14,18 @@ interface VideoEmbedProps {
 
 export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
   const [isClient, setIsClient] = useState(false)
-  const [isARMode, setIsARMode] = useState(false)
+  const [isARMode, setIsARMode] = useState(true)
   const [lastClickTime, setLastClickTime] = useState(0)
-  const [lyricsPosition, setLyricsPosition] = useState({ x: 50, y: 50 })
+  const [lyricsPosition, setLyricsPosition] = useState({ x: 50, y: 85 })
   const videoContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsClient(true)
-    // Animate lyrics position
+    // Animate lyrics position with a more subtle movement
     const interval = setInterval(() => {
       setLyricsPosition({
-        x: 40 + Math.sin(Date.now() / 1000) * 10,
-        y: 50 + Math.cos(Date.now() / 1500) * 5
+        x: 50 + Math.sin(Date.now() / 2000) * 3, // Reduced movement range
+        y: 85 + Math.cos(Date.now() / 2500) * 2  // Reduced movement range
       })
     }, 50)
 
@@ -34,8 +34,7 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
 
   const handleClick = () => {
     const currentTime = Date.now()
-    if (currentTime - lastClickTime < 300) { // Double click threshold
-      // Prevent zooming on double click
+    if (currentTime - lastClickTime < 300) {
       if (!isARMode) {
         return
       }
@@ -56,9 +55,6 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
         <div className="w-full h-full flex items-center justify-center">
           <p className="text-white/50">Loading video...</p>
         </div>
-        <div className="absolute bottom-0 left-0 w-full p-4 text-center bg-gradient-to-t from-black/50 to-transparent z-10">
-          <p className="text-xl">{lyrics}</p>
-        </div>
       </div>
     )
   }
@@ -66,7 +62,7 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
   return (
     <div 
       ref={videoContainerRef}
-      className={`phone-frame mx-auto relative transition-transform duration-300 ${isARMode ? 'scale-110' : ''}`}
+      className={`phone-frame mx-auto relative transition-transform duration-300 ${isARMode ? 'scale-105' : ''}`}
       onClick={handleClick}
     >
       <div className="absolute top-0 left-0 w-full p-4 text-center bg-gradient-to-b from-black/50 to-transparent z-10">
@@ -84,7 +80,7 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
 
       <div className={`relative w-full h-full ${isARMode ? 'ar-mode' : ''}`}>
         <ReactPlayer
-          url="/placeholder-video.mp4"
+          url="/13112850_1080_1920_30fps.mp4"
           width="100%"
           height="100%"
           playing
@@ -98,7 +94,7 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  transform: isARMode ? 'scale(1.1)' : 'none',
+                  transform: isARMode ? 'scale(1.05)' : 'none',
                   transition: 'transform 0.3s ease-in-out',
                 },
               },
@@ -109,10 +105,6 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
           <>
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-t from-blue-500/10 to-transparent"></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="w-32 h-32 border-2 border-blue-400/50 rounded-full animate-pulse"></div>
-                <div className="absolute top-1/2 left-1/2 w-24 h-24 -translate-x-1/2 -translate-y-1/2 border border-blue-400/30 rounded-full"></div>
-              </div>
               <div className="scan-line"></div>
             </div>
             {/* Gemini-style AR Lyrics */}
@@ -128,15 +120,22 @@ export default function VideoEmbed({ nowPlaying, lyrics }: VideoEmbedProps) {
               </div>
               <div className="ar-lyrics-marker"></div>
             </div>
+            {/* AR Interface Elements */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Top AR Elements */}
+              <div className="absolute top-12 left-1/2 transform -translate-x-1/2 flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-400/50 rounded-full animate-pulse"></div>
+                <div className="w-16 h-0.5 bg-blue-400/30"></div>
+              </div>
+              {/* Side AR Elements */}
+              <div className="absolute top-1/2 right-4 transform -translate-y-1/2 flex flex-col items-center space-y-2">
+                <div className="w-1 h-16 bg-blue-400/30"></div>
+                <div className="w-2 h-2 bg-blue-400/50 rounded-full animate-pulse"></div>
+              </div>
+            </div>
           </>
         )}
       </div>
-
-      {!isARMode && (
-        <div className="absolute bottom-0 left-0 w-full p-4 text-center bg-gradient-to-t from-black/50 to-transparent z-10">
-          <p className="text-xl">{lyrics}</p>
-        </div>
-      )}
     </div>
   )
 }
